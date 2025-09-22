@@ -1,0 +1,20 @@
+[
+  {
+    "title": "Automated Bug: Finish purchase successfully - UI + simulated API",
+    "description": "Timed out retrying after 4000ms: expected '<h2.complete-header>' to have text 'THANK YOU FOR YOUR ORDER!', but the text was 'Thank you for your order!'",
+    "stepsToReproduce": "Run the test \"SauceDemo Checkout Tests with UI + Simulated API Finish purchase successfully - UI + simulated API\" in Cypress",
+    "expected": "Expected behavior according to test case",
+    "actual": "Actual behavior captured by Cypress",
+    "severity": "Medium",
+    "timestamp": "2025-09-22T08:47:52.078Z"
+  },
+  {
+    "title": "Automated Bug: Cannot checkout with empty cart",
+    "description": "Timed out retrying after 4000ms: Too many elements found. Found '1', expected '0'.",
+    "stepsToReproduce": "Run the test \"SauceDemo Checkout Tests with UI + Simulated API Cannot checkout with empty cart\" in Cypress",
+    "expected": "Expected behavior according to test case",
+    "actual": "Actual behavior captured by Cypress",
+    "severity": "Medium",
+    "timestamp": "2025-09-22T08:47:58.717Z"
+  }
+]
