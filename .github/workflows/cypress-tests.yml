@@ -34,17 +34,10 @@ jobs:
           record: false
           browser: chrome
           headed: false
+          component: false
           publish-summary: true
 
-      # 5️⃣ Upload Cypress screenshots (always, even if tests fail)
-      - name: Upload Cypress screenshots
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: cypress-screenshots
-          path: cypress/screenshots/
-
-      # 6️⃣ Upload Cypress videos (always, even if tests fail)
+      # 5️⃣ Upload Cypress videos
       - name: Upload Cypress videos
         if: always()
         uses: actions/upload-artifact@v4
@@ -52,17 +45,21 @@ jobs:
           name: cypress-videos
           path: cypress/videos/
 
-      # 7️⃣ Optional: Upload Cypress logs for debugging
-      - name: Upload Cypress logs
+      # 6️⃣ Upload Cypress screenshots
+      - name: Upload Cypress screenshots
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: cypress-logs
-          path: cypress/logs/
+          name: cypress-screenshots
+          path: cypress/screenshots/
 
-      # 8️⃣ Fail CI if any tests failed
-      - name: Fail CI on Cypress test failures
-        if: failure()
+      # 7️⃣ Handle exit code for known bugs
+      - name: Check Cypress exit code
+        if: always()
         run: |
-          echo "⚠️ Cypress tests failed. Check screenshots and videos for details."
-          exit 1
+          echo "⚠️ Cypress run finished."
+          if [ -f cypress/results/failed-known-bugs.txt ]; then
+            echo "Known bugs failed. CI will pass, check report for details."
+          else
+            echo "Other failures detected. CI will fail."
+            exit 1

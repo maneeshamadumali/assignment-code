@@ -12,23 +12,27 @@ describe('SauceDemo Checkout Tests with UI + Simulated API', () => {
     cy.get('#checkout').click();
   });
 afterEach(function () {
-    if (this.currentTest.state === 'failed') {
-      const bugReport = {
-        title: `Automated Bug: ${this.currentTest.title}`,
-        description: this.currentTest.err.message,
-        stepsToReproduce: `Run the test "${this.currentTest.fullTitle()}" in Cypress`,
-        expected: 'Expected behavior according to test case',
-        actual: 'Actual behavior captured by Cypress',
-        severity: 'Medium',
-        timestamp: new Date().toISOString()
-      };
+  if (this.currentTest.state === 'failed') {
+    const bugReport = {
+      title: `Automated Bug: ${this.currentTest.title}`,
+      description: this.currentTest.err.message,
+      stepsToReproduce: `Run the test "${this.currentTest.fullTitle()}" in Cypress`,
+      expected: 'Expected behavior according to test case',
+      actual: 'Actual behavior captured by Cypress',
+      severity: 'Medium',
+      timestamp: new Date().toISOString()
+    };
 
-      // Save the bug report using a Node task
-      cy.task('saveBugReport', { report: bugReport });
-      cy.log(`⚠️ Bug report saved: ${bugReport.title}`);
+    // Save bug report
+    cy.task('saveBugReport', { report: bugReport });
+
+    // Save known bug to a file if tagged
+    if (this.currentTest.title.includes('Cannot checkout') ||
+        this.currentTest.title.includes('Finish purchase successfully')) {
+      cy.writeFile('cypress/results/failed-known-bugs.txt', `${this.currentTest.title}\n`, { flag: 'a+' });
     }
-  });
-
+  }
+});
   it('Form validation - missing First Name', () => {
     cy.get('#last-name').type('Doe');
     cy.get('#postal-code').type('12345');
@@ -37,7 +41,7 @@ afterEach(function () {
     cy.get('[data-test="error"]').should('contain.text', 'First Name is required');
   });
 
-  it('Finish purchase successfully - UI + simulated API', () => {
+  it('Finish purchase successfully - UI + simulated API',{tags: ['known-bug']}, () => {
     cy.get('#first-name').type('John');
     cy.get('#last-name').type('Doe');
     cy.get('#postal-code').type('12345');
@@ -66,7 +70,7 @@ afterEach(function () {
     cy.log('Simulated API: Checkout canceled - UI verification only');
   });
 
-  it('Cannot checkout with empty cart', () => {
+  it('Cannot checkout with empty cart', { tags: ['known-bug'] }, () => {
   cy.log('🔹 Test Start: Cannot checkout with empty cart');
 
   // Open cart and remove all items

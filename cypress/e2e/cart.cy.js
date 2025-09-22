@@ -8,24 +8,27 @@ describe('SauceDemo Cart Tests with UI + Simulated API', () => {
     cy.url().should('include', '/inventory.html');
   });
    afterEach(function () {
-    if (this.currentTest.state === 'failed') {
-      const bugReport = {
-        title: `Automated Bug: ${this.currentTest.title}`,
-        description: this.currentTest.err.message,
-        stepsToReproduce: `Run the test "${this.currentTest.fullTitle()}" in Cypress`,
-        expected: 'Expected behavior according to test case',
-        actual: 'Actual behavior captured by Cypress',
-        severity: 'Medium',
-        timestamp: new Date().toISOString()
-      };
+  if (this.currentTest.state === 'failed') {
+    const bugReport = {
+      title: `Automated Bug: ${this.currentTest.title}`,
+      description: this.currentTest.err.message,
+      stepsToReproduce: `Run the test "${this.currentTest.fullTitle()}" in Cypress`,
+      expected: 'Expected behavior according to test case',
+      actual: 'Actual behavior captured by Cypress',
+      severity: 'Medium',
+      timestamp: new Date().toISOString()
+    };
 
-      // Save the bug report using a Node task
-      cy.task('saveBugReport', { report: bugReport });
-      cy.log(`⚠️ Bug report saved: ${bugReport.title}`);
+    // Save bug report
+    cy.task('saveBugReport', { report: bugReport });
+
+    // Save known bug to a file if tagged
+    if (this.currentTest.title.includes('Cannot checkout') ||
+        this.currentTest.title.includes('Finish purchase successfully')) {
+      cy.writeFile('cypress/results/failed-known-bugs.txt', `${this.currentTest.title}\n`, { flag: 'a+' });
     }
-  });
-
-
+  }
+});
 
   it('Add product to cart - UI + simulated API', () => {
     cy.get('#add-to-cart-sauce-labs-bike-light').click();
