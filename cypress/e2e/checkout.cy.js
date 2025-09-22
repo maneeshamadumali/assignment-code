@@ -1,4 +1,3 @@
-
 describe('SauceDemo Checkout Tests with UI + Simulated API', () => {
   beforeEach(() => {
     cy.visit('https://www.saucedemo.com/');
@@ -6,13 +5,10 @@ describe('SauceDemo Checkout Tests with UI + Simulated API', () => {
     cy.get('#password').type('secret_sauce');
     cy.get('#login-button').click();
     cy.url().should('include', '/inventory.html');
-
-    cy.get('#add-to-cart-sauce-labs-bike-light').click();
-    cy.get('.shopping_cart_link').click();
-    cy.get('#checkout').click();
   });
- // After each test, capture bug if failed
-   afterEach(function () {
+
+  // Capture bug if test fails
+  afterEach(function () {
     if (this.currentTest.state === 'failed') {
       const bugReport = {
         title: `Automated Bug: ${this.currentTest.title}`,
@@ -23,13 +19,15 @@ describe('SauceDemo Checkout Tests with UI + Simulated API', () => {
         severity: 'Medium',
         timestamp: new Date().toISOString()
       };
-
-      // Call the Node task
       cy.task('saveBugReport', { report: bugReport });
     }
   });
 
   it('Form validation - missing First Name', () => {
+    cy.get('#add-to-cart-sauce-labs-bike-light').click();
+    cy.get('.shopping_cart_link').click();
+    cy.get('#checkout').click();
+
     cy.get('#last-name').type('Doe');
     cy.get('#postal-code').type('12345');
     cy.get('#continue').click();
@@ -38,40 +36,38 @@ describe('SauceDemo Checkout Tests with UI + Simulated API', () => {
   });
 
   it('Finish purchase successfully - UI + simulated API', () => {
+    cy.get('#add-to-cart-sauce-labs-bike-light').click();
+    cy.get('.shopping_cart_link').click();
+    cy.get('#checkout').click();
+
     cy.get('#first-name').type('John');
     cy.get('#last-name').type('Doe');
     cy.get('#postal-code').type('12345');
-
-    // Simulated API
-    cy.log('Simulated API: POST /checkout-step-one payload {firstName, lastName, postalCode}');
-
     cy.get('#continue').click();
 
     cy.url().should('include', 'checkout-step-two.html');
     cy.get('.summary_info').should('be.visible');
 
     cy.get('#finish').click();
-
-    // Simulated API
-    cy.log('Simulated API: POST /checkout-complete payload {cartItems, paymentInfo}');
-
     cy.url().should('include', 'checkout-complete.html');
     cy.get('.complete-header').should('have.text', 'THANK YOU FOR YOUR ORDER!');
   });
 
   it('Cancel checkout - UI only', () => {
+    cy.get('#add-to-cart-sauce-labs-bike-light').click();
+    cy.get('.shopping_cart_link').click();
+    cy.get('#checkout').click();
+
     cy.get('#cancel').click();
     cy.url().should('include', '/cart.html');
-
-    cy.log('Simulated API: Checkout canceled - UI verification only');
   });
-  it('Cannot checkout with empty cart', () => {
-  
-  cy.get('.shopping_cart_link').click();
-  cy.get('.cart_item').should('have.length', 0);
-  cy.get('#checkout').click();
-  cy.url().should('not.include', 'checkout-step-one.html');
 
-});
+  it('Cannot checkout with empty cart', () => {
+    // Do NOT add item for this test
+    cy.get('.shopping_cart_link').click();
+    cy.get('.cart_item').should('have.length', 0);
+    cy.get('#checkout').click();
+    cy.url().should('not.include', 'checkout-step-one.html');
+  });
 
 });
