@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout your repository
+      # 1️⃣ Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v3
 
@@ -36,15 +36,7 @@ jobs:
           headed: false
           publish-summary: true
 
-      # 5️⃣ Upload Cypress videos
-      - name: Upload Cypress videos
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: cypress-videos
-          path: cypress/videos/
-
-      # 6️⃣ Upload Cypress screenshots
+      # 5️⃣ Upload Cypress screenshots (always, even if tests fail)
       - name: Upload Cypress screenshots
         if: always()
         uses: actions/upload-artifact@v4
@@ -52,10 +44,25 @@ jobs:
           name: cypress-screenshots
           path: cypress/screenshots/
 
-      # 7️⃣ Upload bug reports (from cy.task)
-      - name: Upload Bug Reports
+      # 6️⃣ Upload Cypress videos (always, even if tests fail)
+      - name: Upload Cypress videos
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: bug-reports
-          path: cypress/bug-reports/
+          name: cypress-videos
+          path: cypress/videos/
+
+      # 7️⃣ Optional: Upload Cypress logs for debugging
+      - name: Upload Cypress logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-logs
+          path: cypress/logs/
+
+      # 8️⃣ Fail CI if any tests failed
+      - name: Fail CI on Cypress test failures
+        if: failure()
+        run: |
+          echo "⚠️ Cypress tests failed. Check screenshots and videos for details."
+          exit 1
