@@ -29,9 +29,9 @@ jobs:
 
       # 4️⃣ Run Cypress tests
       - name: Run Cypress tests
-        uses: cypress-io/github-action@v7
+        uses: cypress-io/github-action@v6
         with:
-          record: false       # Set true if you use Cypress Dashboard
+          record: false
           browser: chrome
           headless: true
 
