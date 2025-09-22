@@ -13,24 +13,30 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1️⃣ Checkout your repository
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      # 2️⃣ Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 20
 
+      # 3️⃣ Install dependencies
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
+      # 4️⃣ Run Cypress tests
       - name: Run Cypress tests
         uses: cypress-io/github-action@v6
         with:
           record: false
           browser: chrome
           headed: false
+          publish-summary: true
 
+      # 5️⃣ Upload Cypress videos
       - name: Upload Cypress videos
         if: always()
         uses: actions/upload-artifact@v4
@@ -38,9 +44,18 @@ jobs:
           name: cypress-videos
           path: cypress/videos/
 
+      # 6️⃣ Upload Cypress screenshots
       - name: Upload Cypress screenshots
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: cypress-screenshots
           path: cypress/screenshots/
+
+      # 7️⃣ Upload bug reports (from cy.task)
+      - name: Upload Bug Reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bug-reports
+          path: cypress/bug-reports/

@@ -3,8 +3,7 @@ describe('SauceDemo Login Tests', () => {
     cy.visit('https://www.saucedemo.com/');
     cy.get('#login_button_container').should('be.visible');
   });
- // After each test, capture bug if failed
-   afterEach(function () {
+afterEach(function () {
     if (this.currentTest.state === 'failed') {
       const bugReport = {
         title: `Automated Bug: ${this.currentTest.title}`,
@@ -16,10 +15,12 @@ describe('SauceDemo Login Tests', () => {
         timestamp: new Date().toISOString()
       };
 
-      // Call the Node task
+      // Save the bug report using a Node task
       cy.task('saveBugReport', { report: bugReport });
+      cy.log(`⚠️ Bug report saved: ${bugReport.title}`);
     }
   });
+
 
   it('Valid login with correct credentials', () => {
     cy.get('#user-name').should('be.visible').type('standard_user');

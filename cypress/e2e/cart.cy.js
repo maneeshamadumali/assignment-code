@@ -7,7 +7,6 @@ describe('SauceDemo Cart Tests with UI + Simulated API', () => {
     cy.get('#login-button').click();
     cy.url().should('include', '/inventory.html');
   });
-   // After each test, capture bug if failed
    afterEach(function () {
     if (this.currentTest.state === 'failed') {
       const bugReport = {
@@ -20,10 +19,12 @@ describe('SauceDemo Cart Tests with UI + Simulated API', () => {
         timestamp: new Date().toISOString()
       };
 
-      // Call the Node task
+      // Save the bug report using a Node task
       cy.task('saveBugReport', { report: bugReport });
+      cy.log(`⚠️ Bug report saved: ${bugReport.title}`);
     }
   });
+
 
 
   it('Add product to cart - UI + simulated API', () => {
